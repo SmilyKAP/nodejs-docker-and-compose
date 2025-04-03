@@ -1,0 +1,44 @@
+services:
+  backend:
+    container_name: kupi-backend
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    image: akosyakin/kupi-backend
+    env_file: ./backend/.env
+    ports:
+      - 4000:3000
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - internal
+
+  frontend:
+    container_name: kupi-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    image: akosyakin/kupi-frontend
+    ports:
+      - 8081:80
+    restart: always
+    networks:
+      - external
+
+  postgres:
+    container_name: postgres
+    image: postgres:14-alpine
+    env_file: ./backend/.env
+    restart: always
+    volumes:
+      - postgres_data:/data/postgres
+    networks:
+      - internal
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+  external:
